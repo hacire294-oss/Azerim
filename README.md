@@ -5,7 +5,7 @@ It demonstrates...
 
 - How to use Layer's eligibility API to determine if a user is eligible for Layer
 - Using Layer to gather both identity and connected bank information for a user
-- Adding Enhanced Autofill as a backup method to retrieve identity information
+- Adding Extended Autofill as a backup method to retrieve identity information
 - Falling back to your application's traditional sign-up flow if the user isn't eligible for Layer or EA.
 - How to initialize Link as soon as possible to minimize latency
 
@@ -64,7 +64,7 @@ npm run start:client
 
 # Using the application
 
-The Layer application represents a situation where a user is not signed into your app and is creating an account for the first time. You will be using Layer to speed up the process by retrieving their identity information and also connecting to a financial institution that the user has connect to in the past.
+The Layer application represents a situation where a user is not signed into your app and is creating an account for the first time. You will be using Layer to speed up the process by retrieving their identity information and also connecting to a financial institution that the user has connected to in the past.
 
 To see Layer in action:
 
@@ -90,7 +90,7 @@ We recommend reading the [Layer documentation](https://plaid.com/docs/layer/) fo
 - After the user submits their phone number, the client calls `submit` on the `linkHandler`, passing in the phone number.
   - This will trigger a `LAYER_AVAILABLE` event if the user is eligible for Layer (that is, they're in Plaid's system and Plaid has all of the data that you marked as required in your template). Otherwise, it will trigger a `LAYER_NOT_AVAILABLE` event.
 - If the user is not eligible for layer, the client will ask the user for their date of birth, and then make a second `submit` call on the `linkHandler`, passing in the birthdate.
-  - This will trigger a `LAYER_AVAILABLE` event if the user is eligible for Extended Autofill (that is, Plaid is capable of retrieving all of the data that you marked as required in your template). Otherwise, it will trigger a `AUTOFILL_NOT_AVAILABLE` event.
+  - This will trigger a `LAYER_AVAILABLE` event if the user is eligible for Extended Autofill (that is, Plaid is capable of retrieving all of the data that you marked as required in your template). Otherwise, it will trigger an `AUTOFILL_NOT_AVAILABLE` event.
 - If the user is not eligible for Layer or Extended Autofill, the application shows the user a standard sign-up form, and the user can complete sign-up the old fashioned way.
 - If the user is eligible for either Layer or Extended Autofill, the client calls `open` on the `linkHandler`, which displays the Layer UI. The user goes through the process of confirming their phone number and agreeing to share their information with your application.
 - Upon successfully completing Link, the client is left with a public token. This token is passed down to the server, which calls `/user_account/session/get` with this token. The server receives the identity information that the user chose to share, along with an `item_id` and `access_token`, if available, for the connected financial institution.
