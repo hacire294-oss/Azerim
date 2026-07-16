@@ -32,11 +32,16 @@ const handleServerError = async function (
   console.error("I received an error ", error);
 
   if (onError) {
-    const errorMsg = `❌ Server Error: ${error.error || JSON.stringify(error)}`;
+    const errorMsg = `❌ Server Error: ${
+      error.error_message || error.error || JSON.stringify(error)
+    }`;
     onError(errorMsg);
   }
 };
 
-export const showAsCurrency = function (amount: number): string {
+export const showAsCurrency = function (amount: number | null): string {
+  if (amount == null) {
+    return "N/A";
+  }
   return amount.toLocaleString("en-US", { style: "currency", currency: "USD" });
 };
