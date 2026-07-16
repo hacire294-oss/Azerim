@@ -19,7 +19,7 @@ export interface AccountSessionInfo {
   bankName: string;
   accountObjects: Array<{
     acctName: string;
-    balance: number;
+    balance: number | null;
     acctType: string;
     acctSubtype: string;
     acctMask: string;

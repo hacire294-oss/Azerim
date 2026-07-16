@@ -59,18 +59,28 @@ const Home: React.FC = () => {
     onSuccess: (public_token, metadata) => {
       console.log(`Link's onSuccess callback was triggered!`);
       console.log({ public_token, metadata });
-      callMyServer(
+      callMyServer<AccountSessionInfo>(
         "/server/tokens/fetch_account_session_info",
         true,
         {
           publicToken: public_token,
         },
         setDebugInfo
-      ).then((data: AccountSessionInfo) => {
-        console.log(data);
-        setAccountInfo(data);
-        setFlowState(FlowState.SUCCESS);
-      });
+      )
+        .then((data) => {
+          console.log(data);
+          // callMyServer resolves to null on a server error (which it has
+          // already surfaced via setDebugInfo), so don't advance to the
+          // success screen with nothing to show.
+          if (!data) {
+            return;
+          }
+          setAccountInfo(data);
+          setFlowState(FlowState.SUCCESS);
+        })
+        .catch((error) => {
+          console.error("Error fetching account session info:", error);
+        });
     },
     onExit: (err, metadata) => {
       console.log(`Link's onExit callback was triggered!`);
