@@ -62,8 +62,9 @@ const Home: React.FC = () => {
     onSuccess: (public_token, metadata) => {
       console.log(`Link's onSuccess callback was triggered!`);
       console.log({ public_token, metadata });
-      // Link flows that don't create an Item return a null public token. Layer
-      // always creates one, so this is just belt-and-suspenders.
+      // Link flows that don't create an Item can return a null public token.
+      // Layer still returns one even when no bank is connected (which is how
+      // Extended Autofill works), so this branch is just belt-and-suspenders.
       if (public_token == null) {
         console.log("No Item was created, so there's no identity to fetch.");
         setFlowState(FlowState.MANUAL_FORM);
