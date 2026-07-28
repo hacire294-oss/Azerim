@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { usePlaidLink, PlaidLinkOptions } from "react-plaid-link";
+import {
+  usePlaidLink,
+  PlaidLinkOptions,
+  PlaidLinkResult,
+} from "react-plaid-link";
 import Header from "../components/Header";
 import { callMyServer } from "../lib/utils";
 import PhoneInputStep from "../components/PhoneInputStep";
@@ -30,8 +34,7 @@ const Home: React.FC = () => {
   const [debugInfo, setDebugInfo] = useState<string>(
     "Debug info will appear here..."
   );
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  const linkOpenRef = useRef<Function | null>(null);
+  const linkOpenRef = useRef<PlaidLinkResult["open"] | null>(null);
   // Honestly, we're just using this for smarter debug messages
   const usingEARef = useRef<boolean>(false);
 
@@ -59,6 +62,13 @@ const Home: React.FC = () => {
     onSuccess: (public_token, metadata) => {
       console.log(`Link's onSuccess callback was triggered!`);
       console.log({ public_token, metadata });
+      // Link flows that don't create an Item return a null public token. Layer
+      // always creates one, so this is just belt-and-suspenders.
+      if (public_token == null) {
+        console.log("No Item was created, so there's no identity to fetch.");
+        setFlowState(FlowState.MANUAL_FORM);
+        return;
+      }
       callMyServer<AccountSessionInfo>(
         "/server/tokens/fetch_account_session_info",
         true,
